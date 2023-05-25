@@ -5,6 +5,7 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -32,8 +33,8 @@ public class MainAgentGA extends Agent {
             e.printStackTrace();
         }
         calculateFintness();
-
-        addBehaviour(new Behaviour() {
+        SequentialBehaviour sq = new SequentialBehaviour();
+        sq.addSubBehaviour(new Behaviour() {
             int cpt=0;
             @Override
             public void action() {
@@ -43,7 +44,6 @@ public class MainAgentGA extends Agent {
                     System.out.println(cpt);
                     int fintess=Integer.parseInt(receivedMSG.getContent());
                     AID sender=receivedMSG.getSender();
-                    System.out.println(sender.getName()+" "+fintess);
                     setAgentFintess(sender,fintess);
                     if(cpt==GAUtils.POPULATION_SIZE){
                         Collections.sort(agentsFitness,Collections.reverseOrder());
@@ -60,23 +60,26 @@ public class MainAgentGA extends Agent {
             }
 
         });
-    //========================================================
-    addBehaviour(new Behaviour() {
+    //=========================Processs===============================
+    sq.addSubBehaviour(new Behaviour() {
         int it =0;
         AgentFitness agnet1;
         AgentFitness agent2;
         @Override
         public void action() {
+                selection();
+
+
+        }
+        private void selection(){
+            System.out.println("=========selection=========");
             agnet1 = agentsFitness.get(0);
             agent2 = agentsFitness.get(1);
             ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
             aclMessage.setContent("chromosome");
             aclMessage.addReceiver(agnet1.getAid());
             aclMessage.addReceiver(agent2.getAid());
-
-        }
-        private  void selection(){
-
+            send(aclMessage);
         }
         @Override
         public boolean done() {
@@ -85,7 +88,7 @@ public class MainAgentGA extends Agent {
         }
     });
     //========================================================
-
+    addBehaviour(sq);
 
     }
     private void calculateFintness(){

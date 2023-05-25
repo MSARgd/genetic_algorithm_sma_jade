@@ -14,7 +14,7 @@ import ma.enset.ga.sequencial.GAUtils;
 import java.util.Random;
 
 public class IndividualAgent extends Agent {
-    private char genes[]=new char[GAUtils.CHROMOSOME_SIZE];
+    private char genes[]=new char[GAUtils.MAX_FITNESS];
     private int fitness;
     Random rnd=new Random();
     @Override
@@ -54,37 +54,38 @@ public class IndividualAgent extends Agent {
     }
 
 private void mutation(){
-    int index=rnd.nextInt(GAUtils.CHROMOSOME_SIZE);
+    int index=rnd.nextInt(GAUtils.MAX_FITNESS);
     if (rnd.nextDouble()<GAUtils.MUTATION_PROB){
         genes[index]=GAUtils.CHARATERS.charAt(rnd.nextInt(GAUtils.CHARATERS.length()));
     }
 }
 
-private void calculateFintess(ACLMessage receivedMSG){
-    fitness=0;
-    for (int i=0;i<GAUtils.CHROMOSOME_SIZE;i++) {
-        if(genes[i]==GAUtils.SOLUTION.charAt(i))
-            fitness+=1;
+    private void calculateFintess(ACLMessage receivedMSG){
+        fitness=0;
+        for (int i=0;i<GAUtils.MAX_FITNESS;i++) {
+            if(genes[i]==GAUtils.SOLUTION.charAt(i))
+                fitness+=1;
+        }
+        ACLMessage replyMsg=receivedMSG.createReply();
+        replyMsg.setContent(String.valueOf(fitness));
+        send(replyMsg);
     }
-    ACLMessage replyMsg=receivedMSG.createReply();
-    replyMsg.setContent(String.valueOf(fitness));
-    send(replyMsg);
-}
-private void sendChromosome(ACLMessage receivedMSG){
-    ACLMessage replyMsg=receivedMSG.createReply();
-    replyMsg.setContent(new String(genes));
-    send(replyMsg);
-}
-private void  changeChromosome(ACLMessage receivedMSG){
-    genes=receivedMSG.getContent().toCharArray();
-}
+    private void sendChromosome(ACLMessage receivedMSG){
+        ACLMessage replyMsg=receivedMSG.createReply();
+        replyMsg.setContent(new String(genes));
+        send(replyMsg);
+    }
+    private void  changeChromosome(ACLMessage receivedMSG){
+        genes=receivedMSG.getContent().toCharArray();
+    }
 
-    @Override
-    protected void takeDown() {
-        try {
-            DFService.deregister(this);
-        } catch (FIPAException e) {
-            e.printStackTrace();
+        @Override
+        protected void takeDown() {
+            try {
+                DFService.deregister(this);
+            } catch (FIPAException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
