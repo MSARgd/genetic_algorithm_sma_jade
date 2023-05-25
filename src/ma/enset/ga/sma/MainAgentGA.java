@@ -72,9 +72,9 @@ public class MainAgentGA extends Agent {
             selection();
             crossover();
             Collections.sort(agentsFitness,Collections.reverseOrder());
+
             System.out.println("agentsFitness.get(0) = " + agentsFitness.get(0).getFitness());
             System.out.println("agentsFitness.get(0).getAid() = " + agentsFitness.get(0).getAid());
-
 
         }
         private void selection(){
