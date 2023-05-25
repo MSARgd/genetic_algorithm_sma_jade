@@ -1,10 +1,7 @@
 package ma.enset.ga.sma;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -12,10 +9,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import ma.enset.ga.sequencial.GAUtils;
-import ma.enset.ga.sequencial.Individual;
-
 import java.util.*;
-
 public class MainAgentGA extends Agent {
     List<AgentFitness> agentsFitness=new ArrayList<>();
     Random rnd = new Random();
