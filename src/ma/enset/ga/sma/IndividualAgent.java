@@ -11,6 +11,7 @@ import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentContainer;
 import ma.enset.ga.sequencial.GAUtils;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class IndividualAgent extends Agent {
@@ -40,10 +41,14 @@ public class IndividualAgent extends Agent {
            public void action() {
                ACLMessage receivedMSG = receive();
                if(receivedMSG!=null){
+
                    String conversationId = receivedMSG.getConversationId();
                    switch (conversationId){
-                       case "mutation":mutation();break;
-                       case "fitness" : calculateFintess(receivedMSG);break;
+                       case "mutation":mutation();
+
+                       break;
+                       case "fitness" : calculateFintess(receivedMSG);
+                       break;
                        case "chromosome":sendChromosome(receivedMSG);break;
                        case "change chromosome":changeChromosome(receivedMSG);break;
                    }
