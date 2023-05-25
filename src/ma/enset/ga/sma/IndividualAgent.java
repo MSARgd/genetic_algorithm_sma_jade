@@ -40,7 +40,8 @@ public class IndividualAgent extends Agent {
            public void action() {
                ACLMessage receivedMSG = receive();
                if(receivedMSG!=null){
-                   switch (receivedMSG.getContent()){
+                   String conversationId = receivedMSG.getConversationId();
+                   switch (conversationId){
                        case "mutation":mutation();break;
                        case "fitness" : calculateFintess(receivedMSG);break;
                        case "chromosome":sendChromosome(receivedMSG);break;
@@ -77,6 +78,8 @@ private void mutation(){
     }
     private void  changeChromosome(ACLMessage receivedMSG){
         genes=receivedMSG.getContent().toCharArray();
+        mutation();
+        calculateFintess(receivedMSG);
     }
 
         @Override
@@ -86,6 +89,5 @@ private void mutation(){
             } catch (FIPAException e) {
                 e.printStackTrace();
             }
-        }
     }
 }

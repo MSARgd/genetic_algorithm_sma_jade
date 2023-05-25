@@ -12,11 +12,13 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import ma.enset.ga.sequencial.GAUtils;
+import ma.enset.ga.sequencial.Individual;
 
 import java.util.*;
 
 public class MainAgentGA extends Agent {
     List<AgentFitness> agentsFitness=new ArrayList<>();
+    Random rnd = new Random();
     @Override
     protected void setup() {
         DFAgentDescription dfAgentDescription=new DFAgentDescription();
@@ -67,7 +69,11 @@ public class MainAgentGA extends Agent {
         AgentFitness agent2;
         @Override
         public void action() {
-                selection();
+            selection();
+            crossover();
+            Collections.sort(agentsFitness,Collections.reverseOrder());
+            System.out.println("agentsFitness.get(0) = " + agentsFitness.get(0).getFitness());
+            System.out.println("agentsFitness.get(0).getAid() = " + agentsFitness.get(0).getAid());
 
 
         }
@@ -76,28 +82,76 @@ public class MainAgentGA extends Agent {
             agnet1 = agentsFitness.get(0);
             agent2 = agentsFitness.get(1);
             ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
-            aclMessage.setContent("chromosome");
+            aclMessage.setConversationId("chromosome");
             aclMessage.addReceiver(agnet1.getAid());
             aclMessage.addReceiver(agent2.getAid());
             send(aclMessage);
-        }
-        @Override
-        public boolean done() {
-            return GAUtils.MAX_IT==it || agentsFitness.get(0).getFitness()==GAUtils.MAX_FITNESS;
+            ++it;
 
         }
+        private void crossover(){
+            ACLMessage aclMessage1 = blockingReceive();
+            ACLMessage aclMessage2 = blockingReceive();
+
+            int pointCroisment=rnd.nextInt(GAUtils.MAX_FITNESS-1)+1;
+            pointCroisment++;
+            char []  chromP1 = aclMessage1.getContent().toCharArray();
+            char[]  chromP2= aclMessage2.getContent().toCharArray();
+            char[] chromOfSone1 = new char[GAUtils.MAX_FITNESS];
+            char[] chromOfSone2 = new char[GAUtils.MAX_FITNESS];
+            for (int i=0;i<chromP1.length;i++) {
+
+                chromOfSone1[i]=chromP1[i];
+                chromOfSone2[i]=chromP2[i];
+            }
+            for (int i=0;i<pointCroisment;i++) {
+                chromOfSone1[i]=chromP2[i];
+                chromOfSone2[i]=chromP1[i];
+            }
+            //===================================================
+
+            ACLMessage message1 = new ACLMessage(ACLMessage.INFORM);
+            message1.setConversationId("change chromosome");
+            message1.setContent(new String(chromOfSone1));
+            message1.addReceiver(agentsFitness.get(GAUtils.POPULATION_SIZE-2).getAid());
+            send(message1);
+
+            /** ============================**/
+
+
+            ACLMessage message2 = new ACLMessage(ACLMessage.INFORM);
+            message2.setConversationId("change chromosome");
+            message2.setContent(new String(chromOfSone2));
+            message2.addReceiver(agentsFitness.get(GAUtils.POPULATION_SIZE-1).getAid());
+            send(message2);
+            /** =====================**/
+            ACLMessage recivedAclMessage1  = blockingReceive();
+            ACLMessage recivedAclMessage2 = blockingReceive();
+            setAgentFintess(recivedAclMessage1.getSender(),Integer.parseInt(recivedAclMessage1.getContent()));
+            setAgentFintess(recivedAclMessage2.getSender(),Integer.parseInt(recivedAclMessage2.getContent()));
+
+
+        }
+
+        @Override
+        public boolean done() {
+              return  GAUtils.MAX_IT==it || agentsFitness.get(0).getFitness()==GAUtils.MAX_FITNESS;
+         }
+
+
     });
     //========================================================
     addBehaviour(sq);
 
     }
+
     private void calculateFintness(){
         ACLMessage message=new ACLMessage(ACLMessage.REQUEST);
 
         for (AgentFitness agf:agentsFitness) {
             message.addReceiver(agf.getAid());
         }
-        message.setContent("fitness");
+        message.setConversationId("fitness");
         send(message);
 
     }

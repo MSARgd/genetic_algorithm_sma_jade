@@ -45,11 +45,11 @@ public class Population {
         individuals.set(individuals.size()-1,individual2);
     }
     public void mutation(){
-       int index=rnd.nextInt(GAUtils.CHROMOSOME_SIZE);
+       int index=rnd.nextInt(GAUtils.MAX_FITNESS);
         if (rnd.nextDouble()<GAUtils.MUTATION_PROB){
             individuals.get(individuals.size()-2).getGenes()[index]=GAUtils.CHARATERS.charAt(rnd.nextInt(GAUtils.CHARATERS.length()));
         }
-        index=rnd.nextInt(GAUtils.CHROMOSOME_SIZE);
+        index=rnd.nextInt(GAUtils.MAX_FITNESS);
         if (rnd.nextDouble()<GAUtils.MUTATION_PROB){
             individuals.get(individuals.size()-1).getGenes()[index]=GAUtils.CHARATERS.charAt(rnd.nextInt(GAUtils.CHARATERS.length()));
         }

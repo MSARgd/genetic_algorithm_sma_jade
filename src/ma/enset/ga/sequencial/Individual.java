@@ -5,7 +5,7 @@ import java.util.Random;
 public class Individual implements Comparable{
     //Bonjour
     //chromosome
-    private char genes[]=new char[GAUtils.CHROMOSOME_SIZE];
+    private char genes[]=new char[GAUtils.MAX_FITNESS];
     private int fitness;
 
     public Individual() {
@@ -16,7 +16,7 @@ public class Individual implements Comparable{
     }
     public void calculateFitness(){
         fitness=0;
-        for (int i=0;i<GAUtils.CHROMOSOME_SIZE;i++) {
+        for (int i=0;i<GAUtils.MAX_FITNESS;i++) {
             if(genes[i]==GAUtils.SOLUTION.charAt(i))
                 fitness+=1;
         }
