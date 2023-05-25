@@ -62,14 +62,26 @@ public class MainAgentGA extends Agent {
         });
     //========================================================
     addBehaviour(new Behaviour() {
+        int it =0;
+        AgentFitness agnet1;
+        AgentFitness agent2;
         @Override
         public void action() {
+            agnet1 = agentsFitness.get(0);
+            agent2 = agentsFitness.get(1);
+            ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
+            aclMessage.setContent("chromosome");
+            aclMessage.addReceiver(agnet1.getAid());
+            aclMessage.addReceiver(agent2.getAid());
 
         }
+        private  void selection(){
 
+        }
         @Override
         public boolean done() {
-            return false;
+            return GAUtils.MAX_IT==it || agentsFitness.get(0).getFitness()==GAUtils.MAX_FITNESS;
+
         }
     });
     //========================================================
